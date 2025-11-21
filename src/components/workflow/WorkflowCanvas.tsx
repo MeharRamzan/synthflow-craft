@@ -10,12 +10,29 @@ import {
   Connection,
   Edge,
   Node,
+  MarkerType,
+  ConnectionLineType,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Workflow } from "@/pages/Workflows";
 import { NodeToolbar } from "./NodeToolbar";
 import { NodeSettingsPanel } from "./NodeSettingsPanel";
 import { WorkflowNode } from "./nodes/WorkflowNode";
+
+const defaultEdgeOptions = {
+  type: "smoothstep",
+  animated: true,
+  style: { 
+    stroke: "hsl(var(--accent))", 
+    strokeWidth: 2 
+  },
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    color: "hsl(var(--accent))",
+    width: 20,
+    height: 20,
+  },
+};
 
 const nodeTypes = {
   workflowNode: WorkflowNode,
@@ -40,7 +57,13 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => {
+      const newEdge = {
+        ...params,
+        ...defaultEdgeOptions,
+      };
+      setEdges((eds) => addEdge(newEdge as Edge, eds));
+    },
     [setEdges]
   );
 
@@ -100,6 +123,12 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
+          defaultEdgeOptions={defaultEdgeOptions}
+          connectionLineType={ConnectionLineType.SmoothStep}
+          connectionLineStyle={{ 
+            stroke: "hsl(var(--accent))", 
+            strokeWidth: 2 
+          }}
           fitView
           className="bg-workflow-bg"
         >
