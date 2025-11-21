@@ -57,6 +57,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        workflow: {
+          bg: "hsl(var(--workflow-bg))",
+          node: "hsl(var(--workflow-node))",
+          "node-border": "hsl(var(--workflow-node-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
