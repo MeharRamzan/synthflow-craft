@@ -111,3 +111,31 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* ReactFlow edge styling */
+.react-flow__edge-path {
+  stroke: hsl(var(--accent));
+  stroke-width: 2px;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: hsl(var(--accent));
+  stroke-width: 3px;
+}
+
+.react-flow__connection-path {
+  stroke: hsl(var(--accent));
+  stroke-width: 2px;
+}
+
+.react-flow__handle {
+  width: 12px;
+  height: 12px;
+  background: hsl(var(--accent));
+  border: 2px solid hsl(var(--background));
+}
+
+.react-flow__handle:hover {
+  background: hsl(var(--accent));
+  transform: scale(1.2);
+}
