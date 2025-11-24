@@ -18,6 +18,9 @@ import { Workflow } from "@/pages/Workflows";
 import { NodeToolbar } from "./NodeToolbar";
 import { NodeSettingsPanel } from "./NodeSettingsPanel";
 import { WorkflowNode } from "./nodes/WorkflowNode";
+import { TestWorkflowDialog } from "./TestWorkflowDialog";
+import { Button } from "@/components/ui/button";
+import { Play } from "lucide-react";
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -55,6 +58,7 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -105,13 +109,20 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
   return (
     <div className="flex-1 flex">
       <div className="flex-1 relative">
-        <div className="absolute top-4 left-4 z-10">
+        <div className="absolute top-4 left-4 z-10 flex items-start gap-3">
           <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
             <h2 className="text-lg font-semibold text-foreground mb-1">
               {workflow.name}
             </h2>
             <p className="text-sm text-muted-foreground">{workflow.description}</p>
           </div>
+          <Button
+            onClick={() => setIsTestDialogOpen(true)}
+            className="shadow-lg"
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Test Workflow
+          </Button>
         </div>
         <NodeToolbar onAddNode={addNode} />
         <ReactFlow
@@ -162,6 +173,13 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
           onClose={() => setSelectedNode(null)}
         />
       )}
+      <TestWorkflowDialog
+        open={isTestDialogOpen}
+        onOpenChange={setIsTestDialogOpen}
+        workflowName={workflow.name}
+        nodes={nodes}
+        edges={edges}
+      />
     </div>
   );
 };
