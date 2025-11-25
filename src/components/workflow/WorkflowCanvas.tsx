@@ -21,7 +21,7 @@ import { WorkflowNode } from "./nodes/WorkflowNode";
 import { TestWorkflowDialog } from "./TestWorkflowDialog";
 import { AgentChatPreview } from "./AgentChatPreview";
 import { Button } from "@/components/ui/button";
-import { Play, MessageSquare } from "lucide-react";
+import { Play, MessageSquare, X } from "lucide-react";
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -109,8 +109,8 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
   );
 
   return (
-    <div className="flex-1 flex">
-      <div className="flex-1 relative">
+    <div className="flex-1 flex h-full">
+      <div className="flex-1 relative flex flex-col">
         <div className="absolute top-4 left-4 z-10 flex items-start gap-3">
           <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
             <h2 className="text-lg font-semibold text-foreground mb-1">
@@ -127,17 +127,27 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
               Test Workflow
             </Button>
             <Button
-              onClick={() => setIsChatPreviewOpen(true)}
-              variant="secondary"
+              onClick={() => setIsChatPreviewOpen(!isChatPreviewOpen)}
+              variant={isChatPreviewOpen ? "default" : "secondary"}
               className="shadow-lg"
             >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Preview Agent
+              {isChatPreviewOpen ? (
+                <>
+                  <X className="h-4 w-4 mr-2" />
+                  Hide Preview
+                </>
+              ) : (
+                <>
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Preview Agent
+                </>
+              )}
             </Button>
           </div>
         </div>
         <NodeToolbar onAddNode={addNode} />
-        <ReactFlow
+        <div className="flex-1">
+          <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
@@ -176,18 +186,19 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
             }}
             className="bg-card border border-border"
           />
-        </ReactFlow>
+          </ReactFlow>
+        </div>
+        
+        {selectedNode && (
+          <NodeSettingsPanel
+            node={selectedNode}
+            onUpdateNode={updateNodeData}
+            onClose={() => setSelectedNode(null)}
+          />
+        )}
       </div>
-      {selectedNode && !isChatPreviewOpen && (
-        <NodeSettingsPanel
-          node={selectedNode}
-          onUpdateNode={updateNodeData}
-          onClose={() => setSelectedNode(null)}
-        />
-      )}
-      {isChatPreviewOpen && (
-        <AgentChatPreview onClose={() => setIsChatPreviewOpen(false)} />
-      )}
+      
+      <AgentChatPreview isVisible={isChatPreviewOpen} />
       <TestWorkflowDialog
         open={isTestDialogOpen}
         onOpenChange={setIsTestDialogOpen}
