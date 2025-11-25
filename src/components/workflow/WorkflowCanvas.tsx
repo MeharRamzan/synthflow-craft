@@ -19,8 +19,9 @@ import { NodeToolbar } from "./NodeToolbar";
 import { NodeSettingsPanel } from "./NodeSettingsPanel";
 import { WorkflowNode } from "./nodes/WorkflowNode";
 import { TestWorkflowDialog } from "./TestWorkflowDialog";
+import { AgentChatPreview } from "./AgentChatPreview";
 import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
+import { Play, MessageSquare } from "lucide-react";
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -59,6 +60,7 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
+  const [isChatPreviewOpen, setIsChatPreviewOpen] = useState(false);
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -116,13 +118,23 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
             </h2>
             <p className="text-sm text-muted-foreground">{workflow.description}</p>
           </div>
-          <Button
-            onClick={() => setIsTestDialogOpen(true)}
-            className="shadow-lg"
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Test Workflow
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setIsTestDialogOpen(true)}
+              className="shadow-lg"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Test Workflow
+            </Button>
+            <Button
+              onClick={() => setIsChatPreviewOpen(true)}
+              variant="secondary"
+              className="shadow-lg"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Preview Agent
+            </Button>
+          </div>
         </div>
         <NodeToolbar onAddNode={addNode} />
         <ReactFlow
@@ -166,12 +178,15 @@ export const WorkflowCanvas = ({ workflow }: WorkflowCanvasProps) => {
           />
         </ReactFlow>
       </div>
-      {selectedNode && (
+      {selectedNode && !isChatPreviewOpen && (
         <NodeSettingsPanel
           node={selectedNode}
           onUpdateNode={updateNodeData}
           onClose={() => setSelectedNode(null)}
         />
+      )}
+      {isChatPreviewOpen && (
+        <AgentChatPreview onClose={() => setIsChatPreviewOpen(false)} />
       )}
       <TestWorkflowDialog
         open={isTestDialogOpen}
